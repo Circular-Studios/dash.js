@@ -1,5 +1,4 @@
-define "dash", [], () ->
-    class Dash
-        constructor: () ->
+class Dash
+    constructor: () ->
 
-    return Dash
+module.exports = Dash

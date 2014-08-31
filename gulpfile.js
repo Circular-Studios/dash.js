@@ -2,19 +2,19 @@ var gulp        = require( 'gulp' ),
     coffee      = require( 'gulp-coffee' ),
     coffeelint  = require( 'gulp-coffeelint' ),
     uglify      = require( 'gulp-uglify' ),
-    concat      = require( 'gulp-concat' );
+    concat      = require( 'gulp-concat' ),
+    mocha       = require( 'gulp-mocha' );
 
-gulp.task( 'build', function() {
-    var linted = gulp
-        .src( './source/**/*.coffee')
-        .pipe( coffeelint() )
-        .pipe( coffeelint.reporter( 'fail' ) );
+require( 'coffee-script/register' );
 
-    linted
+var sources = gulp.src( './source/**/*.coffee' );
+
+gulp.task( 'build', [ 'test' ], function() {
+    sources
         .pipe( concat( 'dash.coffee' ) )
         .pipe( gulp.dest( './dist' ) );
 
-    linted
+    return sources
         .pipe( concat( 'dash.js' ) )
         .pipe( coffee() )
         .pipe( uglify() )
@@ -22,11 +22,17 @@ gulp.task( 'build', function() {
 } );
 
 gulp.task( 'lint', function() {
-    gulp.src( './source/*.coffee' )
+    sources
         .pipe( coffeelint() )
         .pipe( coffeelint.reporter() );
 });
 
 gulp.task( 'test', function() {
-
+    return gulp
+        .src( 'test/**/*.coffee' )
+        .pipe( coffeelint() )
+        .pipe( coffeelint.reporter( 'fail' ) )
+        .pipe( mocha( {
+            reporter: 'spec'
+        } ) );
 } );
