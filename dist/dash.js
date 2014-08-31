@@ -2,9 +2,7 @@
   var Dash;
 
   Dash = (function() {
-    var socket;
-
-    socket = null;
+    Dash.prototype.socket = null;
 
     Dash.prototype.isConnected = false;
 

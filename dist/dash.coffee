@@ -1,5 +1,5 @@
 class Dash
-    socket = null
+    socket: null
     isConnected: false
 
     constructor: () ->
