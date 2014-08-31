@@ -7,32 +7,44 @@ var gulp        = require( 'gulp' ),
 
 require( 'coffee-script/register' );
 
-var sources = gulp.src( './source/**/*.coffee' );
-
-gulp.task( 'build', [ 'test' ], function() {
-    sources
-        .pipe( concat( 'dash.coffee' ) )
-        .pipe( gulp.dest( './dist' ) );
-
-    return sources
-        .pipe( concat( 'dash.js' ) )
-        .pipe( coffee() )
-        .pipe( uglify() )
-        .pipe( gulp.dest( './dist' ) );
-} );
+var sources = './source/**/*.coffee';
+var tests = './test/**/*.coffee';
 
 gulp.task( 'lint', function() {
-    sources
+    return gulp
+        .src( [ sources, tests ] )
         .pipe( coffeelint() )
-        .pipe( coffeelint.reporter() );
+        .pipe( coffeelint.reporter( 'fail' ) );
 });
 
-gulp.task( 'test', function() {
+gulp.task( 'test', [ 'lint' ], function() {
     return gulp
-        .src( 'test/**/*.coffee' )
-        .pipe( coffeelint() )
-        .pipe( coffeelint.reporter( 'fail' ) )
+        .src( tests )
         .pipe( mocha( {
             reporter: 'spec'
         } ) );
 } );
+
+gulp.task( 'build-coffee', [ 'test' ], function() {
+    return gulp
+        .src( sources )
+        .pipe( concat( 'dash.coffee' ) )
+        .pipe( gulp.dest( './dist' ) );
+} );
+
+gulp.task( 'build-js', [ 'test' ], function() {
+    return gulp
+        .src( sources )
+        .pipe( coffee() )
+        .pipe( concat( 'dash.js' ) )
+        .pipe( gulp.dest( './dist' ) );
+} );
+
+gulp.task( 'build-js-min', [ 'test' ], function() {
+    return gulp
+        .src( sources )
+        .pipe( coffee() )
+        .pipe( concat( 'dash.min.js' ) );
+} );
+
+gulp.task( 'build', [ 'test', 'build-coffee', 'build-js', 'build-js-min' ] );
