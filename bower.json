@@ -1,0 +1,24 @@
+{
+  "name": "dash.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/Circular-Studios/dash.js",
+  "license": "MIT",
+  "authors": [
+    "Colden Cullen <colden@coldencullen.com>",
+    "Daniel Jost <daniel@danieljost.com>"
+  ],
+  "description": "A framework for building Dash tools in JavaScript.",
+  "main": "dist/dash.js",
+  "moduleType": [
+    "globals"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ],
+  "dependencies": {
+    "require-cs": "~0.5.0"
+  }
+}

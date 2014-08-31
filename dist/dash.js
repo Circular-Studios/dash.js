@@ -1,0 +1,1 @@
+(function(){define("dash",[],function(){var n;return n=function(){function n(){}return n}()})}).call(this);
