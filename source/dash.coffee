@@ -11,6 +11,7 @@ class Dash
 
         @socket.onopen = ( oe ) ->
             console.log "connected."
+            @isConnected = true
 
         @socket.onclose = ( ce ) ->
             console.log "connection closed."
@@ -22,8 +23,6 @@ class Dash
 
         @socket.onerror = ( err ) ->
             console.log "Error!"
-
-        @isConnected = true
 
     send: ( key, data, cb = ( obj ) -> ) ->
         @socket.send JSON.stringify { key: key, value: data }
