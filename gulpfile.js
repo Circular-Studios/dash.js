@@ -18,10 +18,10 @@ gulp.task( 'lint', function() {
     return gulp
         .src( [ sources, tests ] )
         .pipe( coffeelint() )
-        .pipe( coffeelint.reporter( 'fail' ) );
+        .pipe( coffeelint.reporter() );
 });
 
-gulp.task( 'test', [ 'lint' ], function() {
+gulp.task( 'test', function() {
     return gulp
         .src( tests )
         .pipe( mocha( {
@@ -29,7 +29,7 @@ gulp.task( 'test', [ 'lint' ], function() {
         } ) );
 } );
 
-gulp.task( 'build-js', [ 'test' ], function() {
+gulp.task( 'build-js', function() {
     return browserify( {
         // Required watchify args
         cache: { }, packageCache: { }, fullPaths: true,
@@ -49,7 +49,7 @@ gulp.task( 'build-js', [ 'test' ], function() {
         .pipe( gulp.dest( dist ) );
 } );
 
-gulp.task( 'build-js-min', [ 'build-js' ], function() {
+gulp.task( 'build-js-min', function() {
     return gulp
         .src( './dist/dash.js' )
         .pipe( uglify() )
@@ -57,4 +57,4 @@ gulp.task( 'build-js-min', [ 'build-js' ], function() {
         .pipe( gulp.dest( dist ) );
 } );
 
-gulp.task( 'build', [ 'build-js', 'build-js-min' ] );
+gulp.task( 'build', [ 'build-js', 'build-js-min', 'lint', 'test' ] );
