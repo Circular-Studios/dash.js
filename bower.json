@@ -19,6 +19,5 @@
     "test"
   ],
   "dependencies": {
-    "require-cs": "~0.5.0"
   }
 }
