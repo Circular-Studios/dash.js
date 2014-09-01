@@ -2,13 +2,17 @@ var gulp        = require( 'gulp' ),
     coffee      = require( 'gulp-coffee' ),
     coffeelint  = require( 'gulp-coffeelint' ),
     uglify      = require( 'gulp-uglify' ),
-    concat      = require( 'gulp-concat' ),
-    mocha       = require( 'gulp-mocha' );
+    mocha       = require( 'gulp-mocha' ),
+    rename      = require( 'gulp-rename' ),
+    gutil       = require( 'gulp-util' ),
+    browserify  = require( 'browserify' ),
+    source      = require( 'vinyl-source-stream' );
 
 require( 'coffee-script/register' );
 
 var sources = './source/**/*.coffee';
 var tests = './test/**/*.coffee';
+var dist = './dist';
 
 gulp.task( 'lint', function() {
     return gulp
@@ -25,26 +29,32 @@ gulp.task( 'test', [ 'lint' ], function() {
         } ) );
 } );
 
-gulp.task( 'build-coffee', [ 'test' ], function() {
-    return gulp
-        .src( sources )
-        .pipe( concat( 'dash.coffee' ) )
-        .pipe( gulp.dest( './dist' ) );
-} );
-
 gulp.task( 'build-js', [ 'test' ], function() {
-    return gulp
-        .src( sources )
-        .pipe( coffee() )
-        .pipe( concat( 'dash.js' ) )
-        .pipe( gulp.dest( './dist' ) );
+    return browserify( {
+        // Required watchify args
+        cache: { }, packageCache: { }, fullPaths: true,
+        // The files to include
+        entries: [ './source/dash.coffee' ],
+        // Export Dash for usage
+        standalone: 'Dash',
+        // Add file extentions to make optional in your requires
+        extensions: [ '.coffee' ],
+        // Enable source maps!
+        debug: true
+    } )
+        .transform( 'coffeeify' )
+        .bundle()
+        .on( 'error', gutil.log )
+        .pipe( source( 'dash.js' ) )
+        .pipe( gulp.dest( dist ) );
 } );
 
-gulp.task( 'build-js-min', [ 'test' ], function() {
+gulp.task( 'build-js-min', [ 'build-js' ], function() {
     return gulp
-        .src( sources )
-        .pipe( coffee() )
-        .pipe( concat( 'dash.min.js' ) );
+        .src( './dist/dash.js' )
+        .pipe( uglify() )
+        .pipe( rename( 'dash.min.js' ) )
+        .pipe( gulp.dest( dist ) );
 } );
 
-gulp.task( 'build', [ 'test', 'build-coffee', 'build-js', 'build-js-min' ] );
+gulp.task( 'build', [ 'build-js', 'build-js-min' ] );

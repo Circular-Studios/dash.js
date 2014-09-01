@@ -1,3 +1,5 @@
+uuid = require( 'node-uuid' )
+
 class Dash
     socket: null
     isConnected: false
