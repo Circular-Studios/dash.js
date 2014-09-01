@@ -71,6 +71,9 @@ class Dash
 
         return
 
+    disconnect: () ->
+        do @socket.close if @isConnected
+
     registerReceiveHandler: ( key, handler ) ->
         return if typeof key isnt 'string'
 
@@ -85,6 +88,8 @@ class Dash
 
     # Send data to the engine.
     send: ( key, data, cb = null ) ->
+        return if not @isConnected
+
         cbId = ""
 
         if cb isnt null
