@@ -9,9 +9,10 @@ createMessage = ( key, value, callbackId = "" ) ->
 CallbackMessageKey = '__callback__'
 
 class Dash
-    socket: null
     isConnected: false
-    receiveHandlers: { }
+    _socket: null
+    _receiveHandlers: { }
+    _callbackHandlers: { }
 
     # The callback for on connection opened.
     onConnect: () ->
@@ -20,43 +21,49 @@ class Dash
     # The callback for on connection failed.
     onError: ( err ) ->
 
+    # Register default callbacks
+    constructor: () ->
+        @registerReceiveHandler CallbackMessageKey, ( msg, _, cbId ) =>
+            if cbId of @_callbackHandlers
+                @_callbackHandlers[ cbId ] msg
+            else
+                console.error "Rogue callback received: ", cbId
+
     # Connect to the engine.
     connect: ( port, address = "localhost" ) ->
-        @socket = new WebSocket( "ws://#{address}:#{port}/ws" )
+        @_socket = new WebSocket( "ws://#{address}:#{port}/ws" )
 
-        @socket.onopen = ( oe ) =>
+        @_socket.onopen = ( oe ) =>
             @isConnected = true
             @onConnect()
 
             return
 
-        @socket.onclose = ( ce ) =>
+        @_socket.onclose = ( ce ) =>
             @isConnected = false
             @onDisconnect()
 
             return
 
-        @socket.onmessage = ( message ) =>
-            console.log message.data
-
+        @_socket.onmessage = ( message ) =>
             data = JSON.parse message.data
             return if not data.key or not data.value
 
             responseFunc = ( resp ) =>
-                @socket.send(
+                @_socket.send(
                     createMessage CallbackMessageKey, resp, data.callbackId
                 )
 
-            if data.key of @receiveHandlers
-                for handler in @receiveHandlers[ data.key ]
-                    handler data.value, responseFunc if handler
+            if data.key of @_receiveHandlers
+                for handler in @_receiveHandlers[ data.key ]
+                    handler data.value, responseFunc, data.callbackId if handler
             else
                 console.log "Warning, no handlers for message key #{data.key}"
-                console.log @receiveHandlers
+                console.log @_receiveHandlers
 
             return
 
-        @socket.onerror = ( err ) =>
+        @_socket.onerror = ( err ) =>
             @isConnected = false
             @onError()
 
@@ -68,16 +75,22 @@ class Dash
         return if typeof key isnt 'string'
 
         # Init handlers array
-        if key not of @receiveHandlers
-            @receiveHandlers[ key ] = [ ]
+        if key not of @_receiveHandlers
+            @_receiveHandlers[ key ] = [ ]
 
         # Add the handler
-        @receiveHandlers[ key ].push handler
+        @_receiveHandlers[ key ].push handler
 
         return
 
     # Send data to the engine.
-    send: ( key, data, cb = ( obj ) -> ) ->
-        @socket.send createMessage key, data
+    send: ( key, data, cb = null ) ->
+        cbId = ""
+
+        if cb isnt null
+            cbId = uuid.v4()
+            @_callbackHandlers[ cbId ] = cb
+
+        @_socket.send createMessage key, data, cbId
 
 module.exports = Dash
