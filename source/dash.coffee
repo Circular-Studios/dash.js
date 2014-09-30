@@ -8,6 +8,11 @@ createMessage = ( key, value, callbackId = "" ) ->
 
 CallbackMessageKey = '__callback__'
 
+Status =
+    ok: 1
+    warning: 2
+    error: 3
+
 class Dash
     isConnected: false
     _socket: null
@@ -97,5 +102,14 @@ class Dash
             @_callbackHandlers[ cbId ] = cb
 
         @_socket.send createMessage key, data, cbId
+
+    # Actual helper API functions.
+    getObjects: ( cb ) ->
+        @send "dgame:scene:get_objects", { }, ( res ) ->
+            cb( res.data ) if res.status is Status.ok
+
+            # Handle warnings and errors
+            console.warn( res.message )  if res.status is Status.warning
+            console.error( res.message ) if res.statis is Status.error
 
 module.exports = Dash

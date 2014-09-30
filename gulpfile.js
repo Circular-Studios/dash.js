@@ -58,3 +58,4 @@ gulp.task( 'build-js-min', function() {
 } );
 
 gulp.task( 'build', [ 'build-js', 'build-js-min', 'lint', 'test' ] );
+gulp.task( 'default', [ 'build' ] );
