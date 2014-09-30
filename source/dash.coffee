@@ -9,9 +9,9 @@ createMessage = ( key, value, callbackId = "" ) ->
 CallbackMessageKey = '__callback__'
 
 Status =
-    ok: 1
-    warning: 2
-    error: 3
+    ok: 0
+    warning: 1
+    error: 2
 
 class Dash
     isConnected: false
@@ -105,7 +105,9 @@ class Dash
 
     # Actual helper API functions.
     getObjects: ( cb ) ->
-        @send "dgame:scene:get_objects", { }, ( res ) ->
+        @send "dgame:scene:get_objects", { }, ( response ) ->
+            res = JSON.parse response
+
             cb( res.data ) if res.status is Status.ok
 
             # Handle warnings and errors
