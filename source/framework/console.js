@@ -14,9 +14,7 @@ var Timer = React.createClass({
   },
   render: function() {
     return (
-      <div>Seconds Elapsed: {this.state.secondsElapsed}</div>
+      <h2>Seconds Elapsed: {this.state.secondsElapsed}</h2>
     );
   }
 });
-
-React.renderComponent(<Timer />, modelNode);
