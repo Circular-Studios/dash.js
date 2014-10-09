@@ -112,6 +112,6 @@ class Dash
 
             # Handle warnings and errors
             console.warn( res.message )  if res.status is Status.warning
-            console.error( res.message ) if res.statis is Status.error
+            console.error( res.message ) if res.status is Status.error
 
 module.exports = Dash
