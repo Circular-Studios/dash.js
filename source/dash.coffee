@@ -13,6 +13,22 @@ Status =
     warning: 1
     error: 2
 
+emptyResponseHandler = ( response ) ->
+    res = JSON.parse response
+
+    # Handle warnings and errors
+    console.warn( res.message )  if res.status is Status.warning
+    console.error( res.message ) if res.status is Status.error
+
+callbackResponseHandler = ( cb ) ->
+    return ( response ) ->
+        res = JSON.parse response
+
+        # Handle success, warnings, and errors
+        cb( res.data )               if res.status is Status.ok
+        console.warn( res.message )  if res.status is Status.warning
+        console.error( res.message ) if res.status is Status.error
+
 class Dash
     isConnected: false
     _socket: null
@@ -104,14 +120,25 @@ class Dash
         @_socket.send createMessage key, data, cbId
 
     # Actual helper API functions.
+    refreshGame: ->
+        @send "dgame:refresh", { }, emptyResponseHandler
+
+    refreshObject: ( name, desc ) ->
+        params =
+            objectName: name
+            description: desc
+
+        @send "object:refresh", params, emptyResponseHandler
+
+    refreshComponent: ( objectName, componentName, componentDesc ) ->
+        params =
+            objectName: objectName
+            componentName: componentName
+            description: componentDesc
+
+        @send "object:component:refresh", params, emptyResponseHandler
+
     getObjects: ( cb ) ->
-        @send "dgame:scene:get_objects", { }, ( response ) ->
-            res = JSON.parse response
-
-            cb( res.data ) if res.status is Status.ok
-
-            # Handle warnings and errors
-            console.warn( res.message )  if res.status is Status.warning
-            console.error( res.message ) if res.status is Status.error
+        @send "dgame:scene:get_objects", { }, callbackResponseHandler( cb )
 
 module.exports = Dash
