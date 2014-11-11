@@ -16,9 +16,7 @@ errorFromDException = ( except ) ->
     return new Error except.msg, except.file, except.line
 
 callbackResponseHandler = ( cb ) ->
-    return ( response ) ->
-        res = typeof response is string ? JSON.parse response : response
-
+    return ( res ) ->
         # Handle success, warnings, and errors
         if res.status is Status.ok
             cb res.data
@@ -88,7 +86,8 @@ class Dash
                             file: e.fileName
                         eventResponse.status = Status.error
 
-                    @send CallbackMessageKey, eventResponse, data.callbackId
+                    if data.key isnt CallbackMessageKey
+                        @send CallbackMessageKey, eventResponse, data.callbackId
             else
                 console.warn "No handlers for message key #{data.key}"
                 console.log @_receiveHandlers
