@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 var config = {
   content: [{
     type: 'row',
@@ -8,7 +7,7 @@ var config = {
       content: [{
         type: 'component',
         componentName: 'object-browser',
-        title:'Object Browser'
+        title: 'Object Browser'
       }]
     },
     {
@@ -33,7 +32,7 @@ var config = {
         content: [{
           type: 'component',
           componentName: 'object-browser',
-          title:'Properties'
+          title: 'Properties'
         }]
       }]
     }]
@@ -51,17 +50,17 @@ dash.onConnect = function() {
 }
 
 myLayout.registerComponent( 'testComponent', function( container, state ){
-  container.getElement().html( '<button onClick="pressMeToo();">Connect to Dash</button>' );
+  container.getElement().html( '<button onClick="connectToDash();">Connect to Dash</button>' );
 });
 
 myLayout.registerComponent( 'object-browser', function( container, state ){
-  React.renderComponent(
-    <Lists dataSource={dashObjectData} />,
+  React.render(
+    <Lists dataSource={ dashObjectData } />,
     container.getElement()[0]
   );
 });
 
-pressMeToo = function() {
+connectToDash = function() {
   dash.connect('8008');
   console.log('Connecting to Dash...');
 }
