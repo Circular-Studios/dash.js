@@ -43,10 +43,14 @@ var myLayout = new GoldenLayout( config );
 
 var dash = new Dash();
 var dashObjectData = [];
+var dashObjectList;
 
 dash.onConnect = function() {
-  console.log('Connected to Dash.');
-  dash.getObjects( function(data) { dashObjectData = data; } )
+  console.log( 'Connected to Dash.' );
+  dash.getObjects( function( data ) {
+    dashObjectData = data;
+    dashObjectList.setProps( { data: dashObjectData } );
+  } )
 }
 
 myLayout.registerComponent( 'testComponent', function( container, state ){
@@ -54,15 +58,15 @@ myLayout.registerComponent( 'testComponent', function( container, state ){
 });
 
 myLayout.registerComponent( 'object-browser', function( container, state ){
-  React.render(
-    <Lists dataSource={ dashObjectData } />,
+  dashObjectList = React.renderComponent(
+    <Lists data={ dashObjectData } />,
     container.getElement()[0]
   );
 });
 
 connectToDash = function() {
-  dash.connect('8008');
-  console.log('Connecting to Dash...');
+  dash.connect( '8008' );
+  console.log( 'Connecting to Dash...' );
 }
 
 myLayout.registerComponent( 'example-react', function( container, state ){

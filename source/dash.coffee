@@ -1,33 +1,29 @@
 uuid = require( 'node-uuid' )
 
+CallbackMessageKey = '__callback__'
+
+Status =
+    ok: 0
+    error: 2
+
 createMessage = ( key, value, callbackId = "" ) ->
     JSON.stringify
         key: key
         value: value
         callbackId: callbackId
 
-CallbackMessageKey = '__callback__'
-
-Status =
-    ok: 0
-    warning: 1
-    error: 2
-
-emptyResponseHandler = ( response ) ->
-    res = JSON.parse response
-
-    # Handle warnings and errors
-    console.warn( res.message )  if res.status is Status.warning
-    console.error( res.message ) if res.status is Status.error
+errorFromDException = ( except ) ->
+    return new Error except.msg, except.file, except.line
 
 callbackResponseHandler = ( cb ) ->
-    return ( response ) ->
-        res = JSON.parse response
-
+    return ( res ) ->
         # Handle success, warnings, and errors
-        cb( res.data )               if res.status is Status.ok
-        console.warn( res.message )  if res.status is Status.warning
-        console.error( res.message ) if res.status is Status.error
+        if res.status is Status.ok
+            cb res.data
+        else if res.status is Status.error
+            throw errorFromDException res.data
+
+emptyResponseHandler = callbackResponseHandler( ( resData ) -> )
 
 class Dash
     isConnected: false
@@ -44,15 +40,15 @@ class Dash
 
     # Register default callbacks
     constructor: () ->
-        @registerReceiveHandler CallbackMessageKey, ( msg, _, cbId ) =>
+        @registerReceiveHandler CallbackMessageKey, ( msg, cbId ) =>
             if cbId of @_callbackHandlers
                 @_callbackHandlers[ cbId ] msg
             else
                 console.error "Rogue callback received: ", cbId
 
     # Connect to the engine.
-    connect: ( port, address = "localhost" ) ->
-        @_socket = new WebSocket( "ws://#{address}:#{port}/ws" )
+    connect: ( port, address = "localhost", route = "ws" ) ->
+        @_socket = new WebSocket "ws://#{address}:#{port}/#{route}"
 
         @_socket.onopen = ( oe ) =>
             @isConnected = true
@@ -68,25 +64,39 @@ class Dash
 
         @_socket.onmessage = ( message ) =>
             data = JSON.parse message.data
-            return if not data.key or not data.value
-
-            responseFunc = ( resp ) =>
-                @_socket.send(
-                    createMessage CallbackMessageKey, resp, data.callbackId
-                )
+            if not data.key or not data.value
+                throw new Error "Invalid message format"
 
             if data.key of @_receiveHandlers
                 for handler in @_receiveHandlers[ data.key ]
-                    handler data.value, responseFunc, data.callbackId if handler
+                    eventResponse = { }
+                    try
+                        response = handler data.value, data.callbackId
+
+                        if response is undefined
+                            eventResponse.data = 'success'
+                        else
+                            eventResponse.data = response
+
+                        eventResponse.status = Status.ok
+                    catch e
+                        eventResponse.data =
+                            msg: e.message
+                            line: e.lineNumber
+                            file: e.fileName
+                        eventResponse.status = Status.error
+
+                    if data.key isnt CallbackMessageKey
+                        @send CallbackMessageKey, eventResponse, data.callbackId
             else
-                console.log "Warning, no handlers for message key #{data.key}"
+                console.warn "No handlers for message key #{data.key}"
                 console.log @_receiveHandlers
 
             return
 
         @_socket.onerror = ( err ) =>
             @isConnected = false
-            @onError()
+            @onError( err )
 
             return
 
@@ -96,7 +106,8 @@ class Dash
         do @socket.close if @isConnected
 
     registerReceiveHandler: ( key, handler ) ->
-        return if typeof key isnt 'string'
+        if typeof key isnt 'string'
+            throw new Error "Key must be of type string."
 
         # Init handlers array
         if key not of @_receiveHandlers
@@ -108,27 +119,23 @@ class Dash
         return
 
     # Send data to the engine.
-    send: ( key, data, cb = null ) ->
+    send: ( key, data, cb = emptyResponseHandler ) ->
         return if not @isConnected
 
-        cbId = ""
-
-        if cb isnt null
-            cbId = uuid.v4()
-            @_callbackHandlers[ cbId ] = cb
-
+        cbId = uuid.v4()
+        @_callbackHandlers[ cbId ] = cb
         @_socket.send createMessage key, data, cbId
 
     # Actual helper API functions.
     refreshGame: ->
-        @send "dgame:refresh", { }, emptyResponseHandler
+        @send "dgame:refresh", { }
 
     refreshObject: ( name, desc ) ->
         params =
             objectName: name
             description: desc
 
-        @send "object:refresh", params, emptyResponseHandler
+        @send "object:refresh", params
 
     refreshComponent: ( objectName, componentName, componentDesc ) ->
         params =
@@ -136,7 +143,7 @@ class Dash
             componentName: componentName
             description: componentDesc
 
-        @send "object:component:refresh", params, emptyResponseHandler
+        @send "object:component:refresh", params
 
     getObjects: ( cb ) ->
         @send "dgame:scene:get_objects", { }, callbackResponseHandler( cb )
