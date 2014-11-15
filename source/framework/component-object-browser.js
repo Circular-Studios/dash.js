@@ -1,27 +1,26 @@
-
 var Lists = React.createClass({
     getInitialState: function() {
-      return {data: []};
+      return { data: [] };
     },
     render: function() {
     return (
       <div>
-        {this.props.data.map(function(node, i) {
-          var label = <span className="node">{node.Name}</span>;
+        { this.props.data.map( function( node, i ) { 
+          var label = <span className="node">{ node.Name }</span>;
           return (
-            <TreeView key={node.Name + '|' + i} nodeLabel={label} defaultCollapsed={false}>
-              <span className="node">Components</span>
-              {node.Components.map(function(component, j) {
+            <TreeView key={ node.Name + '|' + i } nodeLabel={ label } defaultCollapsed={ true }>
+              {/*<span className="node">Children</span>*/}
+              { node.Children.map( function( child, j ) {
                 return (
-                  <TreeView nodeLabel={label} key={component.Type} defaultCollapsed={false}>
-                    <div className="info">{component.Type}</div>
+                  <TreeView nodeLabel={ label } key={ child.Type } defaultCollapsed={ false }>
+                    <div className="info">{ child.Type }</div>
                   </TreeView>
                 );
-              })}
+              } ) }
             </TreeView>
           );
-        }, this)}
+        }, this ) }
       </div>
     );
   }
-});
+} );

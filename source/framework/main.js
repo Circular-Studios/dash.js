@@ -54,7 +54,7 @@ dash.onConnect = function() {
 }
 
 myLayout.registerComponent( 'testComponent', function( container, state ){
-  container.getElement().html( '<button onClick="connectToDash();">Connect to Dash</button>' );
+  container.getElement().html( '<button class="connect" onClick="connectToDash();">Connect to Dash</button>' );
 });
 
 myLayout.registerComponent( 'object-browser', function( container, state ){
