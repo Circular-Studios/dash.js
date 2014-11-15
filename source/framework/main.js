@@ -21,7 +21,7 @@ var config = {
         type: 'component',
         height: 20,
         title: 'Console',
-        componentName: 'example-react'
+        componentName: 'dash-console'
       }]
     },
     {
@@ -44,13 +44,14 @@ var myLayout = new GoldenLayout( config );
 var dash = new Dash();
 var dashObjectData = [];
 var dashObjectList;
+var dashConsole;
 
 dash.registerReceiveHandler("dash:logger:message", function(data) {
   container.getElement().html( container.getElement().html() + data.msg );
 });
 
 dash.onConnect = function() {
-  console.log( 'Connected to Dash.' );
+  dashConsole.log( 'Connected to Dash.' );
   dash.getObjects( function( data ) {
     dashObjectData = data;
     dashObjectList.setProps( { data: dashObjectData } );
@@ -62,7 +63,7 @@ myLayout.registerComponent( 'testComponent', function( container, state ){
 });
 
 myLayout.registerComponent( 'object-browser', function( container, state ){
-  dashObjectList = React.renderComponent(
+  dashObjectList = React.render(
     <Lists data={ dashObjectData } />,
     container.getElement()[0]
   );
@@ -70,12 +71,15 @@ myLayout.registerComponent( 'object-browser', function( container, state ){
 
 connectToDash = function() {
   dash.connect( '8008' );
-  console.log( 'Connecting to Dash...' );
+  dashConsole.log( 'Connecting to Dash...' );
 }
 
-myLayout.registerComponent( 'example-react', function( container, state ){
+myLayout.registerComponent( 'dash-console', function( container, state ){
   container.getElement()[0].style.overflow = 'auto';
-  //setInterval(function() { container.getElement().html( container.getElement().html() + '<span>This is a console window.</span><br />' ) }, 5000);
+  dashConsole = React.render(
+    <DashConsole />,
+    container.getElement()[0]
+  );
 });
 
 myLayout.init();
