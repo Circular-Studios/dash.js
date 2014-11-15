@@ -87,7 +87,7 @@ class Dash
                         eventResponse.status = Status.error
 
                     if data.key isnt CallbackMessageKey
-                        @send CallbackMessageKey, eventResponse, data.callbackId
+                        @send CallbackMessageKey, eventResponse, emptyResponseHandler, data.callbackId
             else
                 console.warn "No handlers for message key #{data.key}"
                 console.log @_receiveHandlers
@@ -119,10 +119,12 @@ class Dash
         return
 
     # Send data to the engine.
-    send: ( key, data, cb = emptyResponseHandler ) ->
+    send: ( key, data, cb = emptyResponseHandler, cbId = null ) ->
         return if not @isConnected
 
-        cbId = uuid.v4()
+        console.log "Sending a message"
+
+        cbId = uuid.v4() if cbId is null
         @_callbackHandlers[ cbId ] = cb
         @_socket.send createMessage key, data, cbId
 
