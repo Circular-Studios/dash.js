@@ -45,6 +45,10 @@ var dash = new Dash();
 var dashObjectData = [];
 var dashObjectList;
 
+dash.registerReceiveHandler("dash:logger:message", function(data) {
+  container.getElement().html( container.getElement().html() + data.msg );
+});
+
 dash.onConnect = function() {
   console.log( 'Connected to Dash.' );
   dash.getObjects( function( data ) {
