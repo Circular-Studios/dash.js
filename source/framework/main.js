@@ -47,7 +47,7 @@ var dashObjectList;
 var dashConsole;
 
 dash.registerReceiveHandler("dash:logger:message", function(data) {
-  container.getElement().html( container.getElement().html() + data.msg );
+  dashConsole.log(data);
 });
 
 dash.onConnect = function() {
