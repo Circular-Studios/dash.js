@@ -6,7 +6,8 @@ var gulp        = require( 'gulp' ),
     rename      = require( 'gulp-rename' ),
     gutil       = require( 'gulp-util' ),
     browserify  = require( 'browserify' ),
-    source      = require( 'vinyl-source-stream' );
+    source      = require( 'vinyl-source-stream' ),
+    sequence    = require( 'run-sequence' );
 
 require( 'coffee-script/register' );
 
@@ -57,5 +58,15 @@ gulp.task( 'build-js-min', function() {
         .pipe( gulp.dest( dist ) );
 } );
 
+gulp.task( 'build-sync', function( cb ) {
+    sequence(
+        'lint',
+        'test',
+        'build-js',
+        'build-js-min',
+        cb
+    );
+} );
+
 gulp.task( 'build', [ 'build-js', 'build-js-min', 'lint', 'test' ] );
-gulp.task( 'default', [ 'build' ] );
+gulp.task( 'default', [ 'build-sync' ] );
