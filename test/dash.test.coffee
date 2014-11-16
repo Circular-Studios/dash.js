@@ -13,48 +13,38 @@ describe "Dash", ->
         dash.isConnected.should.equal false
         do testComplete
 
-    ##
     it "Should send messages", ( testComplete ) ->
         mockServer.run testComplete, ( dash, server, done ) ->
             server.registerReceiveHandler 'black_hole', ( data ) ->
                 data.should.equal 'test'
+
+            dash.send 'black_hole', 'test', ->
                 do done
 
-            dash.send 'black_hole', 'test'
-    ##
-
-    ###
     it "Should receive messages", ( testComplete ) ->
         mockServer.run testComplete, ( dash, server, done ) ->
             dash.registerReceiveHandler 'black_hole', ( data ) ->
-                console.log 'msg received'
                 data.should.equal 'test'
+
+            server.send 'black_hole', 'test', ( res ) ->
                 do done
 
-            server.send 'black_hole', 'test'
-    ###
-
-    ###
     it "Should send responses", ( testComplete ) ->
         mockServer.run testComplete, ( dash, server, done ) ->
             dash.registerReceiveHandler 'black_hole', ( data ) ->
-                console.log 'msg received'
                 data.should.equal 'test'
-                return myRes: 'done!'
+                return myRes: 'done'
 
             server.send 'black_hole', 'test', ( res ) ->
-                console.log 'res received'
-                console.log res
+                res.myRes.should.equal 'done'
                 do done
-    ###
 
-    ###
     it "Should receive responses", ( testComplete ) ->
         mockServer.run testComplete, ( dash, server, done ) ->
             server.registerReceiveHandler 'black_hole', ( data ) ->
                 data.should.equal 'test'
-                return myRes: 'done!'
+                return myRes: 'done'
 
             dash.send 'black_hole', 'test', ( res ) ->
+                res.myRes.should.equal 'done'
                 do done
-    ###

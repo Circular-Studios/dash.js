@@ -10,11 +10,13 @@ addEventHandlers = ( server ) ->
 module.exports = mockServer =
     run: ( testCompleteCb, test ) ->
         # Set up server
-        dashServer = new Dash
-        addEventHandlers dashServer
+        server = new Dash
+        addEventHandlers server
         wss.on 'connection', ( ws ) ->
-            dashServer._socket = ws
-            dashServer._init()
+            server._socket = ws
+            server._init()
+            server.onConnect()
+            server.isConnected = true
 
         # Connect to server
         dash = new Dash
@@ -23,11 +25,12 @@ module.exports = mockServer =
         dash.onConnect = ->
             # Ensure we are actually connected
             dash.isConnected.should.equal true
+            server.isConnected.should.equal true
 
-            test dash, dashServer, ->
+            test dash, server, ->
                 # Cleanup
                 do dash.disconnect
-                do dashServer.disconnect
+                do server.disconnect
                 do testCompleteCb
 
     startServer: () ->
@@ -40,6 +43,29 @@ describe 'Dash Server', ->
     before mockServer.startServer
     after  mockServer.endServer
 
-    it "Connects", ( testComplete )->
+    it "Connects", ( testComplete ) ->
         mockServer.run testComplete, ( dash, server, done ) ->
+
             do done
+
+    it "Receives", ( testComplete ) ->
+        mockServer.run testComplete, ( dash, server, done ) ->
+            serverSock = server._socket
+            clientSock = dash._socket
+
+            serverSock.onmessage = ( msg ) ->
+                msg.data.should.equal 'test'
+                do done
+
+            clientSock.send 'test'
+
+    it "Sends", ( testComplete ) ->
+        mockServer.run testComplete, ( dash, server, done ) ->
+            serverSock = server._socket
+            clientSock = dash._socket
+
+            clientSock.onmessage = ( msg ) ->
+                msg.data.should.equal 'test'
+                do done
+
+            serverSock.send 'test'
