@@ -1,4 +1,7 @@
-uuid = require( 'node-uuid' )
+uuid = require 'node-uuid'
+ws   = require 'ws'
+
+WebSocket = WebSocket || ws
 
 CallbackMessageKey = '__callback__'
 
@@ -49,7 +52,10 @@ class Dash
     # Connect to the engine.
     connect: ( port, address = "localhost", route = "ws" ) ->
         @_socket = new WebSocket "ws://#{address}:#{port}/#{route}"
+        @_init()
 
+    # PRIVATE, for use after socket is set.
+    _init: () ->
         @_socket.onopen = ( oe ) =>
             @isConnected = true
             @onConnect()
@@ -87,7 +93,11 @@ class Dash
                         eventResponse.status = Status.error
 
                     if data.key isnt CallbackMessageKey
-                        @send CallbackMessageKey, eventResponse, emptyResponseHandler, data.callbackId
+                        @send(
+                            CallbackMessageKey,
+                            eventResponse,
+                            emptyResponseHandler,
+                            data.callbackId )
             else
                 console.warn "No handlers for message key #{data.key}"
                 console.log @_receiveHandlers
@@ -103,7 +113,7 @@ class Dash
         return
 
     disconnect: () ->
-        do @socket.close if @isConnected
+        do @_socket.close if @isConnected
 
     registerReceiveHandler: ( key, handler ) ->
         if typeof key isnt 'string'
