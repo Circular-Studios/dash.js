@@ -1,7 +1,7 @@
 chai = require 'chai'
 chai.should()
 
-Dash = require '../source/dash.coffee'
+Dash = require '../source/dash'
 
 describe "Dash", ->
     it "isConnected should be false initially", ->
