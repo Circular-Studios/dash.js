@@ -22,7 +22,7 @@ gulp.task( 'lint', function() {
         .pipe( coffeelint.reporter() );
 });
 
-gulp.task( 'test', function() {
+gulp.task( 'test', [ 'lint' ], function() {
     return gulp
         .src( tests )
         .pipe( mocha( {
