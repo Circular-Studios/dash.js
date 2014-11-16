@@ -43,6 +43,7 @@ class Dash
 
     # Register default callbacks
     constructor: () ->
+        @_receiveHandlers = { }
         @registerReceiveHandler CallbackMessageKey, ( msg, cbId ) =>
             if cbId of @_callbackHandlers
                 @_callbackHandlers[ cbId ] msg
@@ -130,10 +131,13 @@ class Dash
 
     # Send data to the engine.
     send: ( key, data, cb = emptyResponseHandler, cbId = null ) ->
-        return if not @isConnected
+        if not @isConnected
+            throw new Error "Not connected to server, can't send message"
 
-        cbId = uuid.v4() if cbId is null
-        @_callbackHandlers[ cbId ] = cb
+        if key isnt CallbackMessageKey
+            cbId = uuid.v4() if cbId is null
+            @_callbackHandlers[ cbId ] = callbackResponseHandler( cb )
+
         @_socket.send createMessage key, data, cbId
 
     # Actual helper API functions.
