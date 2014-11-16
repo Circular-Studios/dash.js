@@ -1,33 +1,44 @@
 ws    = require 'ws'
 Dash  = require '../source/dash'
 
-wss = new ws.Server host: '127.0.0.1', port: 8080
+# Start WebSocket server
+wss = null
 
-testDashServer = ( test ) ->
-    # Set up server
-    dashServer = new Dash
-    wss.on 'connection', ( ws ) ->
-        dashServer._socket = ws
-        dashServer._init()
+addEventHandlers = ( server ) ->
+    #server.registerReceiveHandler 'dash:scene:get_objects', ( data ) ->
 
-    # Connect to server
-    dash = new Dash
-    dash.connect 8080, '127.0.0.1', ''
+module.exports = mockServer =
+    run: ( test ) ->
+        # Set up server
+        dashServer = new Dash
+        addEventHandlers dashServer
+        wss.on 'connection', ( ws ) ->
+            dashServer._socket = ws
+            dashServer._init()
 
-    dash.onConnect = ->
-        # Ensure we are actually connected
-        dash.isConnected.should.equal true
+        # Connect to server
+        dash = new Dash
+        dash.connect 8080, '127.0.0.1', ''
 
-        do test
+        dash.onConnect = ->
+            # Ensure we are actually connected
+            dash.isConnected.should.equal true
 
-        # Cleanup
-        do dash.disconnect
-        do dashServer.disconnect
+            test dash, dashServer, ->
+                # Cleanup
+                do dash.disconnect
+                do dashServer.disconnect
+                #do wss.removeAllListeners 'connection'
+
+    startServer: () ->
+        wss = new ws.Server host: '127.0.0.1', port: 8080
+
+    endServer: () ->
         do wss.close
 
-module.exports =
-    testDashServer: testDashServer
-
 describe 'Dash Server', ->
+    before mockServer.startServer
+    after  mockServer.endServer
+
     it "Connects", ->
-        testDashServer () ->
+        mockServer.run ( dash, server ) ->
