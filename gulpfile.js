@@ -32,7 +32,7 @@ gulp.task( 'test', function() {
 gulp.task( 'build-js', function() {
     return browserify( {
         // Required watchify args
-        cache: { }, packageCache: { }, fullPaths: true,
+        cache: { }, packageCache: { }, fullPaths: false,
         // The files to include
         entries: [ './source/dash.coffee' ],
         // Export Dash for usage
