@@ -8,7 +8,7 @@ addEventHandlers = ( server ) ->
     #server.registerReceiveHandler 'dash:scene:get_objects', ( data ) ->
 
 module.exports = mockServer =
-    run: ( test ) ->
+    run: ( testCompleteCb, test ) ->
         # Set up server
         dashServer = new Dash
         addEventHandlers dashServer
@@ -28,7 +28,7 @@ module.exports = mockServer =
                 # Cleanup
                 do dash.disconnect
                 do dashServer.disconnect
-                #do wss.removeAllListeners 'connection'
+                do testCompleteCb
 
     startServer: () ->
         wss = new ws.Server host: '127.0.0.1', port: 8080
@@ -40,5 +40,6 @@ describe 'Dash Server', ->
     before mockServer.startServer
     after  mockServer.endServer
 
-    it "Connects", ->
-        mockServer.run ( dash, server ) ->
+    it "Connects", ( testComplete )->
+        mockServer.run testComplete, ( dash, server, done ) ->
+            do done
