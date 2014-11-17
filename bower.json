@@ -5,7 +5,8 @@
   "license": "MIT",
   "authors": [
     "Colden Cullen <colden@coldencullen.com>",
-    "Daniel Jost <daniel@danieljost.com>"
+    "Daniel Jost <daniel@danieljost.com>",
+    "Brandon Littell <brandon@brandonlittell.com>"
   ],
   "description": "A framework for building Dash tools in JavaScript.",
   "main": "dist/dash.js",
