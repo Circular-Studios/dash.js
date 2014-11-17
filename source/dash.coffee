@@ -160,6 +160,6 @@ class Dash
         @send "object:component:refresh", params
 
     getObjects: ( cb ) ->
-        @send "dgame:scene:get_objects", { }, callbackResponseHandler( cb )
+        @send "dgame:scene:get_objects", { }, cb
 
 module.exports = Dash
