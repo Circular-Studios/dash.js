@@ -15,7 +15,8 @@ var config = {
       width: 70,
       content: [{
         type: 'component',
-        componentName: 'testComponent',
+        componentName: 'dash-connect',
+        title: 'Connect to Dash'
       },
       {
         type: 'component',
@@ -31,7 +32,7 @@ var config = {
         width: 15,
         content: [{
           type: 'component',
-          componentName: 'object-browser',
+          componentName: 'properties',
           title: 'Properties'
         }]
       }]
@@ -40,17 +41,19 @@ var config = {
 };
 
 var myLayout = new GoldenLayout( config );
-
 var dash = new Dash();
 var dashObjectData = [];
 var dashObjectList;
+var dashSelectedProperties;
 var dashConsole;
 
-dash.registerReceiveHandler("dash:logger:message", function(data) {
+dash.registerReceiveHandler("dash:logger:message", function(data)
+{
   dashConsole.log(data);
 });
 
-dash.onConnect = function() {
+dash.onConnect = function()
+{
   dashConsole.log( 'Connected to Dash.' );
   dash.getObjects( function( data ) {
     dashObjectData = data;
@@ -58,23 +61,35 @@ dash.onConnect = function() {
   } )
 }
 
-myLayout.registerComponent( 'testComponent', function( container, state ){
+myLayout.registerComponent( 'dash-connect', function( container, state )
+{
   container.getElement().html( '<button class="connect" onClick="connectToDash();">Connect to Dash</button>' );
 });
 
-myLayout.registerComponent( 'object-browser', function( container, state ){
+myLayout.registerComponent( 'object-browser', function( container, state )
+{
   dashObjectList = React.render(
-    <Lists data={ dashObjectData } />,
+    <DashObjects data={ [  ] } />,
     container.getElement()[0]
   );
 });
 
-connectToDash = function() {
+myLayout.registerComponent( 'properties', function( container, state )
+{
+  dashSelectedProperties = React.render(
+    <DashProperties data={ [  ] } />,
+    container.getElement()[0]
+  );
+});
+
+connectToDash = function()
+{
   dash.connect( '8008' );
   dashConsole.log( 'Connecting to Dash...' );
 }
 
-myLayout.registerComponent( 'dash-console', function( container, state ){
+myLayout.registerComponent( 'dash-console', function( container, state )
+{
   container.getElement()[0].style.overflow = 'auto';
   dashConsole = React.render(
     <DashConsole />,
