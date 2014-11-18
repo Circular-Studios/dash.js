@@ -1,7 +1,7 @@
 var DashConsoleList = React.createClass({
   render: function() {
     var logItem = function(item) {
-      return <li>{item.msg}</li>;
+      return <li key={ item.timestamp }>{item.msg}</li>;
     };
     return (
       <ul>{this.props.items.map(logItem)}</ul>

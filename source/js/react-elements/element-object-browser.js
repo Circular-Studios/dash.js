@@ -18,7 +18,7 @@ var DashObjects = React.createClass({
             <TreeView key={ node.Name + '|' + i } nodeLabel={ label } defaultCollapsed={ true }>
               { node.Children.map( function( child, j ) {
                 return (
-                  <TreeView nodeLabel={ label } key={ child.Type } defaultCollapsed={ false }>
+                  <TreeView nodeLabel={ label } key={ child.Type + '|' + j } defaultCollapsed={ false }>
                     <div className="info">{ child.Type }</div>
                   </TreeView>
                 );
