@@ -10,3 +10,8 @@ html, body {
 .node {
   color: white;
 }
+
+.close-button {
+	color: #FF3333;
+	text-align: right;
+}
