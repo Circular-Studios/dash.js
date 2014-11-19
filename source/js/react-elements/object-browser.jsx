@@ -30,3 +30,5 @@ var DashObjects = React.createClass({
     );
   }
 } );
+
+module.exports = DashObjects;

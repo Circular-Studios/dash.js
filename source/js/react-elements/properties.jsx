@@ -20,3 +20,5 @@ var DashProperties = React.createClass({
     );
   }
 } );
+
+module.exports = DashProperties;

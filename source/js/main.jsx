@@ -1,3 +1,7 @@
+var DashConsole     = require( './react-elements/console' ),
+    DashObjects     = require( './react-elements/object-browser' ),
+    DashProperties  = require( './react-elements/properties' );
+
 var config = {
   content: [{
     type: 'row',

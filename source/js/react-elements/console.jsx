@@ -33,3 +33,5 @@ var DashConsole = React.createClass({
     );
   }
 });
+
+module.exports = DashConsole;
