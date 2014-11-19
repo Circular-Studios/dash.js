@@ -56,6 +56,13 @@ dash.registerReceiveHandler("dash:logger:message", function(data)
   dashConsole.log(data);
 });
 
+// this function is empty until we add a proper graph for FPS data
+// the empty function stops an error from being thrown in the console
+dash.registerReceiveHandler("dash:perf:frametime", function(data)
+{
+
+});
+
 dash.onConnect = function()
 {
   dashConsole.log( 'Connected to Dash.' );
