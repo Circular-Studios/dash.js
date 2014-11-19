@@ -6,7 +6,7 @@ var config = {
       width: 15,
       content: [{
         type: 'component',
-        componentName: 'object-browser',
+        componentName: 'ObjectBrowser',
         title: 'Object Browser'
       }]
     },
@@ -15,14 +15,14 @@ var config = {
       width: 70,
       content: [{
         type: 'component',
-        componentName: 'dash-connect',
+        componentName: 'DashConnect',
         title: 'Connect to Dash'
       },
       {
         type: 'component',
         height: 20,
         title: 'Console',
-        componentName: 'dash-console'
+        componentName: 'DashConsole'
       }]
     },
     {
@@ -32,7 +32,7 @@ var config = {
         width: 15,
         content: [{
           type: 'component',
-          componentName: 'properties',
+          componentName: 'Properties',
           title: 'Properties'
         }]
       }]
@@ -61,12 +61,12 @@ dash.onConnect = function()
   } );
 };
 
-myLayout.registerComponent( 'dash-connect', function( container, state )
+myLayout.registerComponent( 'DashConnect', function( container, state )
 {
   container.getElement().html( '<button class="connect" onClick="connectToDash();">Connect to Dash</button>' );
 });
 
-myLayout.registerComponent( 'object-browser', function( container, state )
+myLayout.registerComponent( 'ObjectBrowser', function( container, state )
 {
   dashObjectList = React.render(
     <DashObjects data={ [  ] } />,
@@ -74,7 +74,7 @@ myLayout.registerComponent( 'object-browser', function( container, state )
   );
 });
 
-myLayout.registerComponent( 'properties', function( container, state )
+myLayout.registerComponent( 'Properties', function( container, state )
 {
   dashSelectedProperties = React.render(
     <DashProperties data={ [  ] } />,
@@ -88,7 +88,7 @@ connectToDash = function()
   dashConsole.log( 'Connecting to Dash...' );
 };
 
-myLayout.registerComponent( 'dash-console', function( container, state )
+myLayout.registerComponent( 'DashConsole', function( container, state )
 {
   container.getElement()[0].style.overflow = 'auto';
   dashConsole = React.render(
