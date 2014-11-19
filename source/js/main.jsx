@@ -58,8 +58,8 @@ dash.onConnect = function()
   dash.getObjects( function( data ) {
     dashObjectData = data;
     dashObjectList.setProps( { data: dashObjectData } );
-  } )
-}
+  } );
+};
 
 myLayout.registerComponent( 'dash-connect', function( container, state )
 {
@@ -86,7 +86,7 @@ connectToDash = function()
 {
   dash.connect( '8008' );
   dashConsole.log( 'Connecting to Dash...' );
-}
+};
 
 myLayout.registerComponent( 'dash-console', function( container, state )
 {
