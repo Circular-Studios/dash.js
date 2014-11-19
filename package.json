@@ -37,6 +37,7 @@
     "chai": "~1.9.1",
     "coffee-script": "~1.8.0",
     "coffeeify": "~0.7.0",
+    "glob": "^4.1.5",
     "gulp": "~3.8.7",
     "gulp-coffee": "~2.1.2",
     "gulp-coffeelint": "~0.3.4",
@@ -46,6 +47,7 @@
     "gulp-util": "~3.0.1",
     "mocha": "~1.21.4",
     "node-uuid": "~1.4.1",
+    "reactify": "^0.17.0",
     "run-sequence": "^1.0.1",
     "vinyl-source-stream": "~0.1.1",
     "ws": "^0.4.32"
