@@ -1,10 +1,32 @@
+/*
+  Item Fields:
+    file: File name 
+    line:
+    funcName;
+    prettyFuncName;
+    moduleName;
+    logLevel;
+    timestamp;
+    msg;
+*/
+
 var DashConsoleList = React.createClass({
   render: function() {
     var logItem = function(item) {
-      return <li key={ item.id }>{item.msg}</li>;
+      return (
+        <TreeView key={ item.id } nodeLabel={item.msg} defaultCollapsed={true}>
+          <div>File: {item.file}</div>
+          <div>Line: {item.line}</div>
+          <div>Function Name: {item.funcName}</div>
+          <div>Pretty Function Name: {item.prettyFuncName}</div>
+          <div>Module: {item.moduleName}</div>
+          <div>Log Level: {item.logLevel}</div>
+          <div>Timestamp: {item.timestamp}</div>
+        </TreeView>
+      );
     };
     return (
-      <ul>{this.props.items.map(logItem)}</ul>
+      <div>{this.props.items.map(logItem)}</div>
     );
   }
 });
@@ -27,9 +49,7 @@ var DashConsole = React.createClass({
   },
   render: function() {
     return (
-      <div>
-        <DashConsoleList items={this.state.items} />
-      </div>
+      <DashConsoleList items={this.state.items} />
     );
   }
 });
