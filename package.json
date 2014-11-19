@@ -30,7 +30,7 @@
     "url": "https://github.com/Circular-Studios/dash.js/issues"
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp api-test"
   },
   "devDependencies": {
     "browserify": "~5.11.0",
