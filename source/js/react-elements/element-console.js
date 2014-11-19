@@ -1,18 +1,19 @@
 /*
   Item Fields:
-    file: File name 
-    line:
-    funcName;
-    prettyFuncName;
-    moduleName;
-    logLevel;
-    timestamp;
-    msg
+    file: File name of the log origin 
+    line: Line number of the log origin
+    funcName: Simple function name of the log origin
+    prettyFuncName: Expaned function name of the log origin
+    moduleName: Module of the log origin
+    logLevel: Integer representation of log level
+    logLevelLabel: String representation of log level
+    timestamp: Time of log
+    msg: Message of the log
     type:
       0: String
       1: Dash Log
       2: Dash Exception
-    id
+    id: Unique react id
 */
 
 var DashConsoleList = React.createClass({
@@ -32,6 +33,7 @@ var DashConsoleList = React.createClass({
             <div>Pretty Function Name: {item.prettyFuncName}</div>
             <div>Module: {item.moduleName}</div>
             <div>Log Level: {item.logLevel}</div>
+            <div>Log Level Label: {item.logLevelLabel}</div>
             <div>Timestamp: {item.timestamp}</div>
           </TreeView>
         );
