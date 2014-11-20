@@ -44,68 +44,79 @@ var config = {
   }]
 };
 
-var myLayout = new GoldenLayout( config );
-var dash = new Dash();
-var dashObjectData = [];
-var dashObjectList;
-var dashSelectedProperties;
-var dashConsole;
+dash = module.exports = {
+  engine: new Dash(),
+  scene: [],
+  panels: {
+    objectBrowser: { },
+    propertiesEditor: { }
+  },
+  console: { },
+  layout: new GoldenLayout( config )
+};
 
-dash.registerReceiveHandler("dash:logger:message", function(data)
+dash.engine.registerReceiveHandler("dash:logger:message", function(data)
 {
-  dashConsole.log(data);
+  dash.console.log(data);
 });
 
 // this function is empty until we add a proper graph for FPS data
 // the empty function stops an error from being thrown in the console
-dash.registerReceiveHandler("dash:perf:frametime", function(data)
+dash.engine.registerReceiveHandler("dash:perf:frametime", function(data)
 {
 
 });
 
-dash.onConnect = function()
+dash.engine.onConnect = function()
 {
-  dashConsole.log( 'Connected to Dash.' );
-  dash.getObjects( function( data ) {
-    dashObjectData = data;
-    dashObjectList.setProps( { data: dashObjectData } );
+  dash.console.log( 'Connected to Dash.' );
+  dash.engine.getObjects( function( data ) {
+    dash.scene = data;
+    dash.panels.objectBrowser.setProps( { data: dash.scene } );
   } );
 };
 
-myLayout.registerComponent( 'DashConnect', function( container, state )
+//registerElement( 'Myelement', function() { return <DashProperties data={ [] } />; } );
+function registerElement( name, elementCb, storeElementCb )
 {
-  container.getElement().html( '<button class="connect" onClick="connectToDash();">Connect to Dash</button>' );
-});
+  dash.layout.registerComponent( name, function( container, state )
+  {
+    var result = React.render(
+      elementCb(),
+      container.getElement()[0]
+    );
 
-myLayout.registerComponent( 'ObjectBrowser', function( container, state )
-{
-  dashObjectList = React.render(
-    <DashObjects data={ [  ] } />,
-    container.getElement()[0]
-  );
-});
+    if( storeElementCb )
+      storeElementCb( result );
 
-myLayout.registerComponent( 'Properties', function( container, state )
-{
-  dashSelectedProperties = React.render(
-    <DashProperties data={ [  ] } />,
-    container.getElement()[0]
-  );
-});
+    //TODO: Make GL state accessible from react
+  });
+}
+
 
 connectToDash = function()
 {
-  dash.connect( '8008' );
-  dashConsole.log( 'Connecting to Dash...' );
+  dash.engine.connect( '8008' );
+  dash.console.log( 'Connecting to Dash...' );
 };
 
-myLayout.registerComponent( 'DashConsole', function( container, state )
-{
-  container.getElement()[0].style.overflow = 'auto';
-  dashConsole = React.render(
-    <DashConsole />,
-    container.getElement()[0]
-  );
-});
+registerElement( 'DashConnect', function() {
+  return <button className="connect" onClick={ connectToDash }>Connect to Dash</button>;
+} );
+registerElement( 'ObjectBrowser', function() {
+  return <DashObjects data={ [  ] } />;
+}, function( element ) {
+  dash.panels.objectBrowser = element;
+} );
+registerElement( 'Properties', function() {
+  return <DashProperties data={ [] } />;
+}, function( element ) {
+  dash.panels.propertyEditor = element;
+} );
+registerElement( 'DashConsole', function() {
+  return <DashConsole class="console" />;
+}, function( element ) {
+  dash.console = element;
+} );
 
-myLayout.init();
+dash.layout.init();

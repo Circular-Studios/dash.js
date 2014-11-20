@@ -3,7 +3,7 @@ var DashObjects = React.createClass({
       return { data: [] };
     },
     onClick: function( i ) {
-      dashSelectedProperties.setProps( { data: dashObjectData[ i ].Components } );
+      dash.panels.propertyEditor.setProps( { data: dash.scene[ i ].Components } );
     },
     render: function() {
     return (
