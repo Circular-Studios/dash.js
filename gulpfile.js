@@ -5,6 +5,9 @@ var gulp        = require( 'gulp' ),
     mocha       = require( 'gulp-mocha' ),
     rename      = require( 'gulp-rename' ),
     gutil       = require( 'gulp-util' ),
+    sass        = require( 'gulp-sass' ),
+    concatCss   = require( 'gulp-concat-css' ),
+    minifyCss   = require( 'gulp-minify-css' ),
     browserify  = require( 'browserify' ),
     source      = require( 'vinyl-source-stream' ),
     sequence    = require( 'run-sequence' );
@@ -14,6 +17,7 @@ require( 'coffee-script/register' );
 var sources = './source/**/*.coffee';
 var tests = './test/**/*.coffee';
 var dist = './dist';
+var styles = './source/css/**/*.scss';
 
 gulp.task( 'lint', function() {
     return gulp
@@ -57,6 +61,22 @@ gulp.task( 'build-js-min', function() {
         .pipe( rename( 'dash.min.js' ) )
         .pipe( gulp.dest( dist ) );
 } );
+
+gulp.task( 'fw-build-css', function() {
+    return gulp
+        .src( styles )
+        .pipe( sass() )
+        .pipe( concatCss( "dash.css" ) )
+        .pipe( gulp.dest( dist ) );
+});
+
+gulp.task( 'fw-build-css-min', [ 'fw-build-css' ], function() {
+    return gulp
+        .src( dist + '/dash.css' )
+        .pipe( minifyCss( { keepBreaks:true } ) )
+        .pipe( rename( 'dash.min.css' ) )
+        .pipe( gulp.dest( dist ) );
+});
 
 gulp.task( 'build-sync', function( cb ) {
     sequence(

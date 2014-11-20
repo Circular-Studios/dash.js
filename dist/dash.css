@@ -1,0 +1,13 @@
+html,
+body {
+  color: white;
+}
+
+.connect {
+  width: 200px;
+  height: 100px;
+}
+
+.node {
+  color: white;
+}
