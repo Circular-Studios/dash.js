@@ -92,6 +92,7 @@ function registerElement( name, elementCb, storeElementCb )
       storeElementCb( result );
 
     //TODO: Make GL state accessible from react
+    result.setState( state );
     console.log( state );
   });
 }
