@@ -79,9 +79,9 @@ gulp.task( 'fw-build-js', function() {
         // Required watchify args
         cache: { }, packageCache: { }, fullPaths: false,
         // The files to include
-        entries: glob.sync( frameworkSources ),
+        entries: glob.sync( './source/js/react-elements/*.jsx' ), //glob.sync( frameworkSources ),
         // Export Dash for usage
-        //standalone: 'Dash',
+        standalone: 'dash',
         // Add file extentions to make optional in your requires
         extensions: [ '.jsx' ],
         // Enable source maps!
