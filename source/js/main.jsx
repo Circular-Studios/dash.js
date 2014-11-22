@@ -41,7 +41,7 @@ var config = {
 };
 
 var dash = {
-  engine: new Dash(),
+  engine: new DashConnector(),
   scene: [ ],
   panels: {
     objectBrowser: { },

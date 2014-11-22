@@ -12,7 +12,7 @@ var gulp        = require( 'gulp' ),
 
 require( 'coffee-script/register' );
 
-var api = './source/dash.coffee';
+var api = './source/dashconnector.coffee';
 var frameworkSources = './source/js/**/*.jsx';
 var tests = './test/**/*.coffee';
 var dist = './dist';
@@ -27,9 +27,7 @@ gulp.task( 'api-lint', function() {
 gulp.task( 'api-test', [ 'api-lint' ], function() {
     return gulp
         .src( tests )
-        .pipe( mocha( {
-            reporter: 'spec'
-        } ) );
+        .pipe( mocha() );
 } );
 
 gulp.task( 'api-build-js', function() {
@@ -38,8 +36,8 @@ gulp.task( 'api-build-js', function() {
         cache: { }, packageCache: { }, fullPaths: false,
         // The files to include
         entries: [ api ],
-        // Export Dash for usage
-        standalone: 'Dash',
+        // Export DashConnector for usage
+        standalone: 'DashConnector',
         // Add file extentions to make optional in your requires
         extensions: [ '.coffee' ],
         // Enable source maps!
@@ -111,4 +109,6 @@ gulp.task( 'fw-build-sync', function( cb ) {
         cb );
 } );
 
-gulp.task( 'default', [ 'api-build', 'fw-build' ] );
+gulp.task( 'build', [ 'api-build', 'fw-build' ] );
+gulp.task( 'build-sync', [ 'api-build-sync', 'fw-build-sync' ] );
+gulp.task( 'default', [ 'build' ] );

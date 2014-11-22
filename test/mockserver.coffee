@@ -1,5 +1,5 @@
-ws    = require 'ws'
-Dash  = require '../source/dash'
+ws            = require 'ws'
+DashConnector = require '../source/dashconnector'
 
 # Start WebSocket server
 wss = null
@@ -10,7 +10,7 @@ addEventHandlers = ( server ) ->
 module.exports = mockServer =
     run: ( testCompleteCb, test ) ->
         # Set up server
-        server = new Dash
+        server = new DashConnector
         addEventHandlers server
         wss.on 'connection', ( ws ) ->
             server._socket = ws
@@ -19,7 +19,7 @@ module.exports = mockServer =
             server.isConnected = true
 
         # Connect to server
-        dash = new Dash
+        dash = new DashConnector
         dash.connect 8080, '127.0.0.1', ''
 
         dash.onConnect = ->
