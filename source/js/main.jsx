@@ -1,7 +1,3 @@
-var DashConsole     = require( './react-elements/console' ),
-    DashObjects     = require( './react-elements/object-browser' ),
-    DashProperties  = require( './react-elements/properties' );
-
 var config = {
   content: [{
     type: 'row',
@@ -44,16 +40,21 @@ var config = {
   }]
 };
 
-dash = module.exports = {
+var dash = {
   engine: new Dash(),
-  scene: [],
+  scene: [ ],
   panels: {
     objectBrowser: { },
     propertiesEditor: { }
   },
   console: { },
-  layout: new GoldenLayout( config )
+  layout: {
+    golden: new GoldenLayout( config ),
+    registerElement: registerElement
+  }
 };
+
+dash.layout.golden.init();
 
 dash.engine.registerReceiveHandler("dash:logger:message", function(data)
 {
@@ -79,7 +80,7 @@ dash.engine.onConnect = function()
 //registerElement( 'Myelement', function() { return <DashProperties data={ [] } />; } );
 function registerElement( name, elementCb, storeElementCb )
 {
-  dash.layout.registerComponent( name, function( container, state )
+  dash.layout.golden.registerComponent( name, function( container, state )
   {
     var result = React.render(
       elementCb(),
@@ -90,33 +91,17 @@ function registerElement( name, elementCb, storeElementCb )
       storeElementCb( result );
 
     //TODO: Make GL state accessible from react
+    console.log( state );
   });
 }
 
+dash.layout.registerElement( 'DashConnect', function() {
+  function connectToDash() {
+    dash.engine.connect( '8008' );
+    dash.console.log( 'Connecting to Dash...' );
+  }
 
-connectToDash = function()
-{
-  dash.engine.connect( '8008' );
-  dash.console.log( 'Connecting to Dash...' );
-};
-
-registerElement( 'DashConnect', function() {
   return <button className="connect" onClick={ connectToDash }>Connect to Dash</button>;
 } );
-registerElement( 'ObjectBrowser', function() {
-  return <DashObjects data={ [  ] } />;
-}, function( element ) {
-  dash.panels.objectBrowser = element;
-} );
-registerElement( 'Properties', function() {
-  return <DashProperties data={ [] } />;
-}, function( element ) {
-  dash.panels.propertyEditor = element;
-} );
-registerElement( 'DashConsole', function() {
-  return <DashConsole class="console" />;
-}, function( element ) {
-  dash.console = element;
-} );
 
-dash.layout.init();
+module.exports = dash;

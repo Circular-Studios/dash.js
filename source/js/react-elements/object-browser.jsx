@@ -1,3 +1,5 @@
+var dash = require( '../main' );
+
 var DashObjects = React.createClass({
     getInitialState: function() {
       return { data: [] };
@@ -29,6 +31,12 @@ var DashObjects = React.createClass({
       </div>
     );
   }
+} );
+
+dash.layout.registerElement( 'ObjectBrowser', function() {
+  return <DashObjects data={ [  ] } />;
+}, function( element ) {
+  dash.panels.objectBrowser = element;
 } );
 
 module.exports = DashObjects;

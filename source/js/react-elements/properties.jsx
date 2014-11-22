@@ -1,3 +1,5 @@
+var dash = require( '../main' );
+
 var DashProperties = React.createClass({
     getInitialState: function() {
       return { data: [] };
@@ -19,6 +21,12 @@ var DashProperties = React.createClass({
       </div>
     );
   }
+} );
+
+dash.layout.registerElement( 'Properties', function() {
+  return <DashProperties data={ [] } />;
+}, function( element ) {
+  dash.panels.propertyEditor = element;
 } );
 
 module.exports = DashProperties;
