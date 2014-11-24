@@ -28,7 +28,7 @@ callbackResponseHandler = ( cb ) ->
 
 emptyResponseHandler = callbackResponseHandler( ( resData ) -> )
 
-class Dash
+class DashConnector
     isConnected: false
     _socket: null
     _receiveHandlers: { }
@@ -162,4 +162,4 @@ class Dash
     getObjects: ( cb ) ->
         @send "dgame:scene:get_objects", { }, cb
 
-module.exports = Dash
+module.exports = DashConnector

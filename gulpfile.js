@@ -5,39 +5,39 @@ var gulp        = require( 'gulp' ),
     mocha       = require( 'gulp-mocha' ),
     rename      = require( 'gulp-rename' ),
     gutil       = require( 'gulp-util' ),
+    glob        = require( 'glob' ),
     browserify  = require( 'browserify' ),
     source      = require( 'vinyl-source-stream' ),
     sequence    = require( 'run-sequence' );
 
 require( 'coffee-script/register' );
 
-var sources = './source/**/*.coffee';
+var api = './source/dashconnector.coffee';
+var frameworkSources = './source/js/**/*.jsx';
 var tests = './test/**/*.coffee';
 var dist = './dist';
 
-gulp.task( 'lint', function() {
+gulp.task( 'api-lint', function() {
     return gulp
-        .src( [ sources, tests ] )
+        .src( [ api, tests ] )
         .pipe( coffeelint() )
         .pipe( coffeelint.reporter() );
 });
 
-gulp.task( 'test', [ 'lint' ], function() {
+gulp.task( 'api-test', [ 'api-lint' ], function() {
     return gulp
         .src( tests )
-        .pipe( mocha( {
-            reporter: 'spec'
-        } ) );
+        .pipe( mocha() );
 } );
 
-gulp.task( 'build-js', function() {
+gulp.task( 'api-build-js', function() {
     return browserify( {
         // Required watchify args
         cache: { }, packageCache: { }, fullPaths: false,
         // The files to include
-        entries: [ './source/dash.coffee' ],
-        // Export Dash for usage
-        standalone: 'Dash',
+        entries: [ api ],
+        // Export DashConnector for usage
+        standalone: 'DashConnector',
         // Add file extentions to make optional in your requires
         extensions: [ '.coffee' ],
         // Enable source maps!
@@ -50,7 +50,7 @@ gulp.task( 'build-js', function() {
         .pipe( gulp.dest( dist ) );
 } );
 
-gulp.task( 'build-js-min', function() {
+gulp.task( 'api-build-js-min', [ 'api-build-js' ], function() {
     return gulp
         .src( './dist/dash.js' )
         .pipe( uglify() )
@@ -58,15 +58,57 @@ gulp.task( 'build-js-min', function() {
         .pipe( gulp.dest( dist ) );
 } );
 
-gulp.task( 'build-sync', function( cb ) {
+gulp.task( 'api-build', [ 'api-build-js', 'api-build-js-min', 'api-lint', 'api-test' ] );
+gulp.task( 'api-build-sync', function( cb ) {
     sequence(
-        'lint',
-        'test',
-        'build-js',
-        'build-js-min',
-        cb
-    );
+        'api-lint',
+        'api-test',
+        'api-build-js',
+        'api-build-js-min',
+        cb );
 } );
 
-gulp.task( 'build', [ 'build-js', 'build-js-min', 'lint', 'test' ] );
-gulp.task( 'default', [ 'build-sync' ] );
+gulp.task( 'fw-lint', function() {
+
+} );
+
+gulp.task( 'fw-build-js', function() {
+    return browserify( {
+        // Required watchify args
+        cache: { }, packageCache: { }, fullPaths: false,
+        // The files to include
+        entries: glob.sync( './source/js/react-elements/*.jsx' ), //glob.sync( frameworkSources ),
+        // Export Dash for usage
+        standalone: 'dash',
+        // Add file extentions to make optional in your requires
+        extensions: [ '.jsx' ],
+        // Enable source maps!
+        debug: true
+    } )
+        .transform( 'reactify' )
+        .bundle()
+        .on( 'error', gutil.log )
+        .pipe( source( 'dash.framework.js' ) )
+        .pipe( gulp.dest( dist ) );
+} );
+
+gulp.task( 'fw-build-js-min', [ 'fw-build-js' ], function() {
+    return gulp
+        .src( './dist/dash.framework.js' )
+        .pipe( uglify() )
+        .pipe( rename( 'dash.framework.min.js' ) )
+        .pipe( gulp.dest( dist ) );
+} );
+
+gulp.task( 'fw-build', [ 'fw-lint', 'fw-build-js', 'fw-build-js-min' ] );
+gulp.task( 'fw-build-sync', function( cb ) {
+    sequence(
+        'fw-lint',
+        'fw-build-js',
+        'fw-build-js-min',
+        cb );
+} );
+
+gulp.task( 'build', [ 'api-build', 'fw-build' ] );
+gulp.task( 'build-sync', [ 'api-build-sync', 'fw-build-sync' ] );
+gulp.task( 'default', [ 'build' ] );
