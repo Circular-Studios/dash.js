@@ -61,9 +61,7 @@ gulp.task( 'build-js-min', [ 'build-js' ], function() {
 gulp.task( 'build', [ 'build-js', 'build-js-min', 'lint', 'test' ] );
 gulp.task( 'build-sync', function( cb ) {
     sequence(
-        'lint',
         'test',
-        'build-js',
         'build-js-min',
         cb );
 } );
