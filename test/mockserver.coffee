@@ -1,5 +1,5 @@
 ws            = require 'ws'
-DashConnector = require '../source/dashconnector'
+DashConnector = require '../source/js/dashconnector'
 
 # Start WebSocket server
 wss = null

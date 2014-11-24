@@ -1,7 +1,7 @@
 chai = require 'chai'
 chai.should()
 
-DashConnector = require '../source/dashconnector'
+DashConnector = require '../source/js/dashconnector'
 mockServer    = require './mockserver'
 
 describe "Dash Connector", ->
