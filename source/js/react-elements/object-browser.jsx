@@ -1,9 +1,11 @@
+var dash = require( '../main' );
+
 var DashObjects = React.createClass({
     getInitialState: function() {
       return { data: [] };
     },
     onClick: function( i ) {
-      dashSelectedProperties.setProps( { data: dashObjectData[ i ].Components } );
+      dash.panels.propertyEditor.setProps( { data: dash.scene[ i ].Components } );
     },
     render: function() {
     return (
@@ -12,8 +14,8 @@ var DashObjects = React.createClass({
           var self = this;
           var label = new React.DOM.span({
             className: 'node',
-            onClick: function() { self.onClick( i ) }
-          }, node.Name )
+            onClick: function() { self.onClick( i ); }
+          }, node.Name );
           return (
             <TreeView key={ node.Name + '|' + i } nodeLabel={ label } defaultCollapsed={ true }>
               { node.Children.map( function( child, j ) {
@@ -30,3 +32,11 @@ var DashObjects = React.createClass({
     );
   }
 } );
+
+dash.layout.registerElement( 'ObjectBrowser', function() {
+  return <DashObjects data={ [  ] } />;
+}, function( element ) {
+  dash.panels.objectBrowser = element;
+} );
+
+module.exports = DashObjects;

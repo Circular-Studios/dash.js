@@ -1,3 +1,5 @@
+var dash = require( '../main' );
+
 /*
   Item Fields:
     file: File name of the log origin 
@@ -68,3 +70,11 @@ var DashConsole = React.createClass({
     );
   }
 });
+
+dash.layout.registerElement( 'DashConsole', function() {
+  return <DashConsole class="console" />;
+}, function( element ) {
+  dash.console = element;
+} );
+
+module.exports = DashConsole;
