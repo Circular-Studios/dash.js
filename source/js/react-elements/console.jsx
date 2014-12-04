@@ -65,8 +65,13 @@ var DashConsole = React.createClass({
     this.setState({items: nextItems, keyCount: key++});
   },
   render: function() {
+    /*var cx = React.addons.classSet;
+    var classes = cx({
+      'console-item': true
+    });*/
+    var classname = 'console-item';
     return (
-      <DashConsoleList items={this.state.items} />
+      <DashConsoleList items={this.state.items} className={classname} />
     );
   }
 });

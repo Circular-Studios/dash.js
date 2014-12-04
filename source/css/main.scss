@@ -1,5 +1,13 @@
+// Variables
+$darkColor: #222;
+$lightColor: #eee;
+
+$font: sans-serif;
+
+
 html, body {
-  color: white;
+	font: $font;
+	color: $lightColor;
 }
 
 .connect {
@@ -9,4 +17,48 @@ html, body {
 
 .node {
   color: white;
+}
+
+
+.console-item {
+	width: 100%;
+	display: block;
+
+	background-color: $darkColor;
+}
+
+
+// TreeView Styles
+.tree-view {
+  overflow-y: hidden;
+
+  width: 100%;
+  //disp
+}
+
+/* style for the container */
+.tree-view_children {
+  margin-left: 16px;
+}
+
+.tree-view_children-collapsed {
+  height: 0px;
+}
+
+.tree-view_arrow {
+  cursor: pointer;
+  margin-right: 6px;
+  display: inline-block;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* rotate the triangle to close it */
+.tree-view_arrow-collapsed {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  transform: rotate(-90deg);
 }
