@@ -1,9 +1,10 @@
 DashEngine = require './engine'
 DashLayout = require './layout'
+DashScene  = require './scene'
 
 class Dash
-  scene: [ ]
   engine: { }
+  scene: { }
   panels:
     objectBrowser: { }
     propertiesEditor: { }
@@ -12,6 +13,7 @@ class Dash
 
   constructor: ->
     @engine = new DashEngine this
+    @scene  = new DashScene this
     @layout = new DashLayout this
 
 module.exports = Dash

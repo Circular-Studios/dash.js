@@ -14,9 +14,9 @@ dash.engine.registerReceiveHandler "dash:perf:zone_data", ( data ) ->
 
 dash.engine.onConnect = ->
   dash.console.log 'Connected to Dash.'
-  dash.engine.getObjects ( data ) ->
-    dash.scene = data;
-    dash.panels.objectBrowser.setProps data: dash.scene
+  dash.scene.getObjects ( objs ) ->
+    console.log objs
+    dash.panels.objectBrowser.setProps data: objs
 
 dash.layout.registerElement 'DashConnect', () ->
   connectToDash = ->

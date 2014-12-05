@@ -4,7 +4,7 @@ DashObjects = React.createClass
     getInitialState: ->
       return data: []
     onClick: ( i ) ->
-      dash.panels.propertyEditor.setProps data: dash.scene[ i ].Components
+      dash.panels.propertyEditor.setProps data: dash.scene.objects[ i ].Components
     render: ->
       return (
         <div>
