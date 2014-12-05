@@ -1,15 +1,15 @@
 chai = require 'chai'
 chai.should()
 
-DashConnector = require '../source/js/dashconnector'
-mockServer    = require './mockserver'
+DashEngine = require '../source/js/engine'
+mockServer = require './mockserver'
 
 describe "Dash Connector", ->
     before mockServer.startServer
     after  mockServer.endServer
 
     it "isConnected should be false initially", ( testComplete ) ->
-        dash = new DashConnector
+        dash = new DashEngine
         dash.isConnected.should.equal false
         do testComplete
 

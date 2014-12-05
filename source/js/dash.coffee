@@ -1,13 +1,17 @@
-DashConnector = require './dashconnector'
-DashLayout    = require './layout'
+DashEngine = require './engine'
+DashLayout = require './layout'
 
 class Dash
-  engine: new DashConnector()
   scene: [ ]
+  engine: { }
   panels:
     objectBrowser: { }
     propertiesEditor: { }
   console: { }
-  layout: new DashLayout()
+  layout: { }
+
+  constructor: ->
+    @engine = new DashEngine this
+    @layout = new DashLayout this
 
 module.exports = Dash

@@ -28,7 +28,7 @@ callbackResponseHandler = ( cb ) ->
 
 emptyResponseHandler = callbackResponseHandler( ( resData ) -> )
 
-class DashConnector
+class DashEngine
     isConnected: false
     _socket: null
     _receiveHandlers: { }
@@ -42,7 +42,8 @@ class DashConnector
     onError: ( err ) ->
 
     # Register default callbacks
-    constructor: () ->
+    constructor: ( dash ) ->
+        @dash = dash
         @_receiveHandlers = { }
         @registerReceiveHandler CallbackMessageKey, ( msg, cbId ) =>
             if cbId of @_callbackHandlers
@@ -159,7 +160,4 @@ class DashConnector
 
         @send "object:component:refresh", params
 
-    getObjects: ( cb ) ->
-        @send "dgame:scene:get_objects", { }, cb
-
-module.exports = DashConnector
+module.exports = DashEngine
