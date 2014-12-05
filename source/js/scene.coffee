@@ -12,9 +12,15 @@ class GameObject
       else # Else just copy the value
         @[ prop ] = value
 
+  save: ->
+    @scene.dash.refreshObject @Name, this
+
 class DashScene
   # Scene object tree
   objects: []
+
+  # Pass through for GameObject class
+  GameObject: GameObject
 
   constructor: ( dash ) ->
     @dash = dash
