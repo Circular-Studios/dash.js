@@ -1,9 +1,11 @@
+var dash = require( '../main' );
+
 var DashObjects = React.createClass({
     getInitialState: function() {
       return { data: [] };
     },
     onClick: function( i ) {
-      dashSelectedProperties.setProps( { data: dashObjectData[ i ].Components } );
+      dash.panels.propertyEditor.setProps( { data: dash.scene[ i ].Components } );
     },
     removeObject: function( i ) {
       dashObjectData.splice( i, i + 1 );
@@ -38,3 +40,11 @@ var DashObjects = React.createClass({
     );
   }
 } );
+
+dash.layout.registerElement( 'ObjectBrowser', function() {
+  return <DashObjects data={ [  ] } />;
+}, function( element ) {
+  dash.panels.objectBrowser = element;
+} );
+
+module.exports = DashObjects;

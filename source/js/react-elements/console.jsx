@@ -1,3 +1,5 @@
+var dash = require( '../main' );
+
 var DashConsoleList = React.createClass({
   render: function() {
     var logItem = function(item) {
@@ -33,3 +35,11 @@ var DashConsole = React.createClass({
     );
   }
 });
+
+dash.layout.registerElement( 'DashConsole', function() {
+  return <DashConsole class="console" />;
+}, function( element ) {
+  dash.console = element;
+} );
+
+module.exports = DashConsole;
