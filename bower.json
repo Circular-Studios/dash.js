@@ -20,8 +20,8 @@
     "test"
   ],
   "dependencies": {
-    "golden-layout": "1.0.4",
-    "react": "0.12.0",
-    "react-treeview": "0.3.10"
+    "golden-layout": "1.0.5",
+    "react": "0.12.1",
+    "react-treeview": "0.3.11"
   }
 }
