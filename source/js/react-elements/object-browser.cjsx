@@ -4,13 +4,17 @@ DashObjects = React.createClass
     getInitialState: ->
       return data: []
     onClick: ( i ) ->
-      dash.panels.propertyEditor.setProps data: dash.scene.objects[ i ].Components
+      dash.panels.propertyEditor.setProps data: dash.scene.objects[ i ]
+    removeObject: ( i ) ->
+      # TODO: this only removes the object on the tools side
+      dash.scene.objects.splice i, 1
+      this.setProps data: dash.scene.objects
     render: ->
       return (
         <div>
           {
             this.props.data.map( ( node, i ) ->
-              self = this;
+              self = this
               close = new React.DOM.span(
                 {
                   className: 'close-button'
