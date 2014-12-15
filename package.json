@@ -30,11 +30,12 @@
     "url": "https://github.com/Circular-Studios/dash.js/issues"
   },
   "scripts": {
-    "test": "gulp api-test"
+    "test": "gulp build-sync"
   },
   "devDependencies": {
     "browserify": "~5.11.0",
     "chai": "~1.9.1",
+    "coffee-reactify": "^2.0.0",
     "coffee-script": "~1.8.0",
     "coffeeify": "~0.7.0",
     "glob": "^4.1.5",
